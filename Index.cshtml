@@ -1,0 +1,387 @@
+﻿@model WebApp.Models.ScheduleView
+
+@{
+    this.Layout = null;
+    DateTime dt = DateTime.Now.AddDays(-16);
+    System.Globalization.CultureInfo cul = System.Globalization.CultureInfo.CurrentCulture;
+    int n = (int)cul.Calendar.GetDayOfWeek(dt);
+    DateTime dt1;
+    if (n == 0) { n += 6; dt1 = dt.AddDays(-n); }
+    else { dt1 = dt.AddDays(-(n - 1)); }
+    DateTime dt2 = dt1.AddDays(6);
+    DateTime dt3 = new DateTime(dt1.Year, dt1.Month, dt1.Day, 0, 0, 0);
+    List<DateTime> ldt = new List<DateTime>();
+    for (int i = 0; i < 6; i++)
+    {
+        ldt.Add(dt1.AddDays(i));
+    };
+    int week = 0;
+    string usern = User.Identity.Name;
+    int w = 0;
+    if (TempData["w"] != null)
+    {
+        w = (int)TempData["w"];
+
+    }
+    if (Model != null)
+    {
+        week = Convert.ToInt32(Model.Weeks.Find(p => p.DateStart == dt3).WeekNum);
+        week -= 1;
+        if (w == 0) { w = week; }
+        if (w == -1) { w = 0; }
+    }
+    List<string> DaysOfW = new List<string>() { "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота" };
+
+}
+<style>
+    .lec {
+        width: 20px;
+        height: 20px;
+        background: #cbffdf;
+        display: inline-block;
+        margin-right: 1%;
+    }
+    .prac {
+        width: 20px;
+        height: 20px;
+        background: #f8ffe0;
+        display: inline-block;
+        margin-right: 1%;
+        margin-left: 4%;
+    }
+    .labrab {
+        width: 20px;
+        height: 20px;
+        background: #eacbff;
+        display: inline-block;
+        margin-right: 1%;
+        margin-left: 4%;
+    }
+    .lab {
+        display: inline-block;
+        margin-bottom:2%;
+    }
+</style>
+
+<div id="mod"></div>
+<div id="mod1"></div>
+<div id="mod2"></div>
+
+<div class="row" id="FromMod">
+    <div class="col-md-12 col-sm-10 text-center text-info">
+        @if (w != week)
+        {
+            int dif = w - week;
+            dt1 = dt1.AddDays(dif * 7);
+            dt2 = dt2.AddDays(dif * 7);
+            ldt = new List<DateTime>();
+            for (int i = 0; i < 6; i++)
+            {
+                ldt.Add(dt1.AddDays(i));
+            };
+            <h2 style="margin:0%;">Расписание на @(w + 1)-ю неделю (@dt1.ToShortDateString() - @dt2.ToShortDateString())</h2>
+        }
+        else
+        {
+            <h2 style="margin:0%;">Расписание на текущую (@(week + 1)) неделю (@dt1.ToShortDateString() - @dt2.ToShortDateString())</h2>
+        }
+        <br />
+    </div>
+</div>
+<div class="row">
+    <div class="container">
+        <div class="col text-center text-info">
+
+            <div class="lec"></div>
+            <div class="lab"><b>Лекции</b></div>
+            <div class="prac"></div>
+            <div class="lab"><b>Практические занятия</b></div>
+            <div class="labrab"></div>
+            <div class="lab"><b>Лабораторные работы</b></div>
+        </div>
+    </div>
+</div>
+@for (int i = 0, j = 1; j < DaysOfW.Count;)
+{
+        <div class="row">
+            <div class="col-md-6 col-sm-6">
+                <div class="hero-unit">
+                    <table style="width:100%;" class="table">
+                        <thead class="t">
+                            <tr>
+                                <th colspan="2" width="70%" align="left" style="padding-left:5%;"><h3 style="color: #163756; margin:0; padding-bottom:1%;"><b>@DaysOfW[i]</b> (@ldt[i].ToShortDateString())</h3></th>
+                                <th width="30%" style="text-align:right;"><a class="btn" id="cl_d_@i-w_@w" name="clear" href="@Url.Action("Index", "Home")" title="Очистить"><span class="glyphicon glyphicon-erase" aria-hidden="true"></span></a></th>
+                            </tr>
+                        </thead>
+                        @{int h = 0;
+                            if (Model.Weeks[w].Days[i].Celebr)
+                            {
+                        <tr>
+                            <td align="center" colspan="3" style="color:darkred"><b>Праздничный день</b></td>
+                        </tr> 
+                            }
+                            if (Model.Weeks[w].Days[i].Subjects != null && !Model.Weeks[w].Days[i].Celebr)
+                            {
+                                foreach (var t in Model.Weeks[w].Days[i].Subjects)
+                                {
+                                    string tr = "";
+                                    if (t.KindOfSubject == "Лекция")
+                                    {
+                                        tr = "style='background-color:#cbffdf'";
+                                    }
+                                    else if (t.KindOfSubject == "Практическое занятие")
+                                    {
+                                        tr = "style='background-color:#f8ffe0'";
+                                    }
+                                    else if (t.KindOfSubject == "Лабораторная работа")
+                                    {
+                                        tr = "style='background-color:#eacbff'";
+                                    }
+                                    string t1 = @t.TimeStart.ToLocalTime().ToShortTimeString();
+                                    string t2 = @t.TimeEnd.ToLocalTime().ToShortTimeString();
+                        <tr id="tr_@w-@i-@h">
+
+                            <td width = "20%" align = "center" @Html.Raw(tr) ><b> @t1 - @t2 </b></td>
+                            @if (t.Cancel)
+                            {
+                                @:<td width="50%">@t.SubjectName, @t.GroupStud, @t.Audit, [<span style="color:darkred">Отменено</span>]</td>
+                            }
+                            else
+                            {
+                                @:<td width="50%">@t.SubjectName, @t.GroupStud, @t.Audit</td>
+                            }
+                            <td width = "20%" style = "text-align:right; padding-right:4%"><a class="btn-link" id="crs_@h-d_@i-w_@w" name="crea" title="Создать">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>&nbsp; &nbsp;
+                            <a class="btn-link" id="cs_@h-d_@i-w_@w" name="chang" title="Изменить"><span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></a>&nbsp; &nbsp;
+                            <a class="btn-link" id="ds_@h-d_@i-w_@w" name="dele" title="Удалить"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></a>&nbsp; &nbsp;
+                            <a class="btn-link" id="vs_@h-d_@i-w_@w" name="view" title="Посмотреть"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></a></td>
+                        </tr>
+                                    h++;
+                                };
+                            }
+
+                            if ((h < 4) || (Model.Weeks[w].Days[i].Subjects == null))
+                            {
+                        <tr>
+                            <td align="center" colspan="3">
+                                <a class="btn btn-lg" id="add_@i" name="add" style="font-size:16px"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;&nbsp;<b>Добавить предмет</b></a>
+                            </td>
+                        </tr>
+                                }
+                            }
+                    </table>
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-6">
+                <div class="hero-unit">
+                    <table style="width:100%;" class="table">
+                        <thead class="t">
+                            <tr>
+                                <th colspan="2" width="70%" align="left" style="padding-left:5%;"><h3 style="color: #163756; margin:0; padding-bottom:1%;"><b>@DaysOfW[j]</b> (@ldt[j].ToShortDateString())</h3></th>
+                                <th width="30%" style="text-align:right;"><a class="btn" id="cl_d_@j-w_@w" name="clear" href="@Url.Action("ClearDay", "Schedule")" title="Очистить"><span class="glyphicon glyphicon-erase" aria-hidden="true"></span></a></th>
+                            </tr>
+                        </thead>
+
+                        @{h = 0;
+                            if (Model.Weeks[w].Days[j].Celebr)
+                            {
+                                <tr>
+                                    <td align="center" colspan="3" style="color:darkred"><b>Праздничный день</b></td>
+                                </tr>
+                            }
+                            if (Model.Weeks[w].Days[j].Subjects != null && !Model.Weeks[w].Days[j].Celebr)
+                            {
+                                foreach (var t in Model.Weeks[w].Days[j].Subjects)
+                                {
+                                    string tr = "";
+                                    if (t.KindOfSubject == "Лекция")
+                                    {
+                                        tr = "style='background-color:#cbffdf'";
+                                    }
+                                    else if (t.KindOfSubject == "Практическое занятие")
+                                    {
+                                        tr = "style='background-color:#f8ffe0'";
+                                    }
+                                    else if (t.KindOfSubject == "Лабораторная работа")
+                                    {
+                                        tr = "style='background-color:#eacbff'";
+                                    }
+                                    string t1 = @t.TimeStart.ToLocalTime().ToShortTimeString();
+                                    string t2 = @t.TimeEnd.ToLocalTime().ToShortTimeString();
+                                            <tr id = "tr_@w-@j-@h">
+
+                                                 <td width = "20%" align = "center" @Html.Raw(tr)><b> @t1 - @t2 </b></td>
+                                                      @if (t.Cancel)
+                                                      {
+                                            @:<td width="50%">@t.SubjectName, @t.GroupStud, @t.Audit, [<span style="color:darkred">Отменено</span>]</td>
+                                                }
+                                                      else
+                                                      {
+                                            @:<td width="50%">@t.SubjectName, @t.GroupStud, @t.Audit</td>
+                                                }
+                                                      <td width = "20%" style = "text-align:right; padding-right:4%"><a class="btn-link" id="crs_@h-d_@j-w_@w" name="crea" title="Создать"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>&nbsp; &nbsp;<a class="btn-link" id="cs_@h-d_@j-w_@w" name="chang" title="Изменить"><span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></a>&nbsp; &nbsp;<a class="btn-link" id="ds_@h-d_@j-w_@w" name="dele" title="Удалить"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></a>&nbsp; &nbsp;<a class="btn-link" id="vs_@h-d_@j-w_@w" name="view" title="Посмотреть"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></a></td>
+                                            </tr>
+                                        h++;
+                                    };
+                                }
+                            if ((h< 4) || (Model.Weeks[w].Days[j].Subjects == null))
+                            {
+                            <tr>
+                                <td align="center" colspan="3">
+                                    <a class="btn btn-lg" id="add_@j" name="add" style="font-size:16px"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;&nbsp;<b>Добавить предмет</b></a>
+                                </td>
+                            </tr>
+                            }
+                            }
+                        </table>
+                </div>
+            </div>
+        </div>
+    j+=2;
+    i+=2;
+}
+
+    <script type="text/javascript">
+    $(document).ready(function () {
+        var we=@w;var wee=@week;
+        var s = 0; /*var table;*/
+        var day = new Date();
+        var n = day.getDay();
+        var heun = document.getElementsByClassName("hero-unit");
+        for (var i = 0; i < 6; i++) {
+            if ((we==wee)&&(n-1) == i) {
+                heun[i].style.backgroundColor = "#ffe7cb";
+            };
+        };
+		
+        $("a[name=crea]").each(function () {
+            $(this).click(function () {
+                var idsub = this.id.toString();
+                var s = idsub.substr(4, 1);
+                var d = idsub.substr(8, 1);
+                var w = idsub.substr(12);
+                var requrl = '@Url.Action("FormGrid", "Schedule", null, Request.Url.Scheme, null)';
+                $.ajax({
+                    type: "POST",
+                    url: requrl,
+                    data: {
+                        w: w,
+                        d: d,
+                        s: s
+                    },
+                    success: function (data) {
+                        $("#mod2").html(data);
+                        $("#MyModal2").modal("show");
+                    },
+                    error: (error) => {
+                        console.log(JSON.stringify(error));
+                    }
+                });
+            });
+        });
+		
+        $("a[name=chang]").each(function () {
+            $(this).click(function () {
+                var idsub = this.id.toString();
+                var s = idsub.substr(3, 1);
+                var d = idsub.substr(7, 1);
+                var w = idsub.substr(11);
+                var requrl = '@Url.Action("ChaSubject", "Schedule", null, Request.Url.Scheme, null)';
+                $.ajax({
+                    type: "POST",
+                    url: requrl,
+                    data: {
+                        w: w,
+                        d: d,
+                        s: s
+                    },
+                    success: function (data) {
+                        $("#mod1").html(data);
+                        $("#MyModal1").modal("show");
+                    },
+                    error: (error) => {
+                        console.log(JSON.stringify(error));
+                    }
+                });
+            });
+        });
+
+        $("a[name=clear]").each(function () {
+            $(this).click(function () {
+                var result = confirm("Вы действительно хотите удалить все предметы за этот день?");
+                if (result) {
+                    var d = this.id.toString().substr(5, 1);
+                    var w = this.id.toString().substr(9);
+                    var requrl = '@Url.Action("DelSubjects", "Schedule", null, Request.Url.Scheme, null)';
+                    $.ajax({
+                        type: "POST",
+                        url: requrl,
+                        data: {
+                            w: w,
+                            d: d,
+                        },
+                        success: function () {
+                            location.reload();
+                        },
+                        error: (error) => {
+                            console.log(JSON.stringify(error));
+                        }
+                    });
+                }
+            });
+        });
+		
+        $("a[name=dele]").each(function () {
+            $(this).click(function () {
+                var result = confirm("Вы действительно хотите удалить этот предмет?");
+                if (result) {
+                    var s = this.id.toString().substr(3, 1);
+                    var d = this.id.toString().substr(7, 1);
+                    var w = this.id.toString().substr(11);
+                    alert(this.id + " " + s + " " + d + " " + w);
+                    var requrl = '@Url.Action("DelSubject", "Schedule", null, Request.Url.Scheme, null)';
+                $.ajax({
+                    type: "POST",
+                    url: requrl,
+                    data: {
+                        w: w,
+                        d: d,
+                        s: s
+                    },
+                    success: function () {
+                        location.reload();
+                    },
+                    error: (error) => {
+                        console.log(JSON.stringify(error));
+                    }
+                });
+                }
+            });
+        });
+		
+        $("a[name=add]").each(function () {
+            $(this).click(function () {
+                var d = this.id.toString().substr(4);            
+                var week = @week;
+                var usern = '@User.Identity.Name';
+                var requrl = '@Url.Action("AddSubj", "Schedule", null, Request.Url.Scheme, null)';
+                $.ajax({
+                    type: "POST",
+                    url: requrl,
+                    data: {
+                        w: week,
+                        d: d,
+                        usern: usern
+                    },
+                    success: function (data) {
+                        $("#mod").html(data);
+                        $("#MyModal").modal("show");
+                    },
+                    error: (error) => {
+                        console.log(JSON.stringify(error));
+                    }
+                });
+            });
+        });
+    });
+    </script>

@@ -1,0 +1,204 @@
+﻿@model WebApp.Models.Grid
+@{
+    int k = 0;   
+}
+
+<title>Сетка</title>
+@using (Html.BeginForm("GridSave", "Schedule", FormMethod.Post))
+{
+    <div class="container-fluid">
+        <div class="row">
+            <div>
+                <div class="col-md-offset-1 col-md-3 col-sm-offset-1 col-sm-3">
+                    <div>
+                        @Html.LabelFor(m => m.SubjectName, new { @class = "control-label" })
+                        <div class="">
+                            @Html.DisplayFor(m => m.SubjectName)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-3">
+                    <div>
+                        @Html.LabelFor(m => m.KindOfSubject, new { @class = "control-label" })
+                        <div class="">
+                            @Html.DisplayFor(m => m.KindOfSubject)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-4">
+                    <div>
+                        @Html.LabelFor(m => m.Semestr, new { @class = "control-label" })
+                        <div class="">
+                            @Html.DisplayFor(m => m.Semestr)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div><br />
+              <div class="row">
+                  <div class="col-md-offset-1 col-md-3 col-sm-offset-1 col-sm-3">
+                      <div>
+                          @Html.LabelFor(m => m.Group, new { @class = "control-label" })
+                          <div class="">
+                              @Html.DisplayFor(m => m.Group)
+                          </div>
+                      </div>
+                  </div>
+                  @if (Model.KindOfSubject == "Лабораторная работа")
+                  {
+                      <div class="col-md-3 col-sm-3">
+                          <div>
+                              @Html.LabelFor(m => m.subgr, new { @class = "control-label" })
+                              <div class="">
+                                  @Html.DisplayFor(m => m.subgr)
+                              </div>
+                          </div>
+                      </div>
+                  }
+                  <div class="col-md-4 col-sm-4">
+                      <div>
+                          @Html.LabelFor(m => m.Course, new { @class = "control-label" })
+                          <div class="">
+                              @Html.DisplayFor(m => m.Course)
+                          </div>
+                      </div>
+                  </div>
+              </div>
+        <br />
+        <div class="row">
+            <div class="col-md-offset-1 col-md-5 col-sm-offset-1 col-sm-5">
+                <label>Время проведения занятия: </label>
+                <p>@Model.TimeStart.ToLocalTime().ToShortTimeString() - @Model.TimeEnd.ToLocalTime().ToShortTimeString()</p>
+            </div>
+        </div>
+
+        <br />
+        <div class="row">
+            <div class="col-md-offset-1 col-md-5 col-sm-offset-1 col-sm-5">
+                @Html.LabelFor(m => m.Theme, new { @class = "control-label" })
+                <div class="">
+                    @Html.TextAreaFor(m => m.Theme, new { @class = "form-control boxsizingBorder" })
+                </div>
+            </div>
+            <div class="col-md-5 col-sm-5">
+                @Html.LabelFor(m => m.Zadanie, new { @class = "control-label" })
+                <div class="">
+                    @Html.TextAreaFor(m => m.Zadanie, new { @class = "form-control boxsizingBorder" })
+                </div>
+            </div>
+        </div><br /><br />
+        <div class="row">
+            <div class="col-md-offset-1 col-sm-offset-1">
+                <div class="table-responsive">
+                    <table border="1" class="table table-bordered" style="width:70%; border-spacing:10px; ">
+                        <tr class="text-info text-center">
+                            <th>№</th>
+                            <th>ФИО студента</th>
+                            @if (Model.StudMarks[0].marks.M1)
+                            {
+                                <th>@Html.LabelFor(m => m.StudMarks[0].marks.M1)</th>
+                                k++;
+                            }
+                            @if (Model.StudMarks[0].marks.M2 != null)
+                            {
+                                <th>@Html.LabelFor(m => m.StudMarks[0].marks.M2)</th>
+                                k++;
+                            }
+                            @if (Model.StudMarks[0].marks.M3 != null)
+                            {
+                                <th>@Html.LabelFor(m => m.StudMarks[0].marks.M3)</th>
+                                k++;
+                            }
+                            @if (Model.StudMarks[0].marks.M4)
+                            {
+                                <th>@Html.LabelFor(m => m.StudMarks[0].marks.M4)</th>
+                                k++;
+                            }
+                            @if (Model.StudMarks[0].marks.M5 != null)
+                            {
+                                <th>@Html.LabelFor(m => m.StudMarks[0].marks.M4)</th>
+                                k++;
+                            }
+                            @if (Model.StudMarks[0].marks.M6)
+                            {
+                                <th>@Html.LabelFor(m => m.StudMarks[0].marks.M6)</th>
+                                k++;
+                            }
+                            @if (Model.StudMarks[0].marks.M7 != null)
+                            {
+                                <th>@Html.LabelFor(m => m.StudMarks[0].marks.M7)</th>
+                                k++;
+                            }
+                            @if (Model.StudMarks[0].marks.M8)
+                            {
+                                <th>@Html.LabelFor(m => m.StudMarks[0].marks.M8)</th>
+                                k++;
+                            }
+                            <th>Комментарий</th>
+                        </tr>
+                        @{
+                            for (int i = 0; i < Model.StudMarks.Count; i++)
+                            {
+                                <tr class="text-center">
+                                    <td>@(i + 1)</td>
+                                    <td class="text-left">@Model.StudMarks[i].FIO</td>
+                                    @if (Model.StudMarks[i].marks.M1)
+                                    {
+                                        <th>@Html.CheckBoxFor(m => m.StudMarks[i].listMarks.M1)</th>
+                                    }
+                                    @if (Model.StudMarks[i].marks.M2 != null)
+                                    {
+                                        <th>@Html.TextBoxFor(m => m.StudMarks[i].listMarks.M2)</th>
+                                    }
+                                    @if (Model.StudMarks[i].marks.M3 != null)
+                                    {
+                                        <th>@Html.TextBoxFor(m => m.StudMarks[i].listMarks.M3)</th>
+                                    }
+                                    @if (Model.StudMarks[i].marks.M4)
+                                    {
+                                        <th>@Html.CheckBoxFor(m => m.StudMarks[i].listMarks.M4)</th>
+                                    }
+                                    @if (Model.StudMarks[i].marks.M5 != null)
+                                    {
+                                        <th>@Html.TextBoxFor(m => m.StudMarks[i].listMarks.M4)</th>
+                                    }
+                                    @if (Model.StudMarks[i].marks.M6)
+                                    {
+                                        <th>@Html.CheckBoxFor(m => m.StudMarks[i].listMarks.M6)</th>
+                                    }
+                                    @if (Model.StudMarks[i].marks.M7 != null)
+                                    {
+                                        <th>@Html.TextBoxFor(m => m.StudMarks[i].listMarks.M7)</th>
+                                    }
+                                    @if (Model.StudMarks[i].marks.M8)
+                                    {
+                                        <th>@Html.CheckBoxFor(m => m.StudMarks[i].listMarks.M8)</th>
+                                    }
+                                    <td>@Html.TextBoxFor(m => m.StudMarks[i].Comment)</td>
+                                </tr>
+                            }
+                            if (Model.KindOfSubject == "Лабораторная работа")
+                            {
+                                <tr id="addst" class="text-center">
+                                    <td></td>
+                                    <td><button class="btn btn-info">Добавить студента из другой подгруппы</button></td>
+                                    @for (int j = 0; j < (k + 1); j++)
+                                    {
+                                        if (j == k)
+                                        {
+                                            <td><input type="submit" class="btn btn-info" value="Сохранить" /></td>
+                                        }
+                                        else
+                                        {
+                                            <td></td>
+                                        }
+                                    }
+                                </tr>
+                            }
+                        }
+                    </table>
+                </div>                
+            </div>
+        </div>
+    </div>
+}

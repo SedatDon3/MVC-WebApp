@@ -1,0 +1,405 @@
+﻿@model WebApp.Models.Day
+
+@{
+    DateTime dt = DateTime.Now;
+    System.Globalization.CultureInfo cul = System.Globalization.CultureInfo.CurrentCulture;
+    int n = (int)cul.Calendar.GetDayOfWeek(dt);
+    DateTime dt1;
+    if (n == 0) { n += 6; dt1 = dt.AddDays(-n); }
+    else { dt1 = dt.AddDays(-(n - 1)); }
+    DateTime dt2 = dt1.AddDays(6);
+    DateTime dt3 = new DateTime(dt1.Year, dt1.Month, dt1.Day, 0, 0, 0);
+    string usern = User.Identity.Name;
+    List<string> selectLists = new List<string>() { "Лекция", "Практическое занятие", "Лабораторная работа" };
+    List<string> selectListsTime = new List<string>() { "8:30", "10:10", "12:20", "14:00", "15:40", "17:30" };
+    List<string> selectListsTime1 = new List<string>() { "10:00", "11:40", "13:50", "15:30", "17:10", "19:00" };
+    List<string> DaysOfW = new List<string>() { "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота" };
+    int w = 0, d = 0, s = 0;
+    if (TempData["w"] != null)
+    {
+        w = (int)TempData["w"];
+        d = (int)TempData["d"];
+    }
+    List<string> TimeSt = (List<string>)ViewBag.TimeSt;
+    List<string> TimeEn = (List<string>)ViewBag.TimeEn;    
+}
+
+@using (Html.BeginForm("AddSubject", "Schedule", FormMethod.Post))
+{
+    @Html.ValidationSummary(true)
+    @Html.Hidden("d", d)
+    <div class="modal" id="MyModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header text-info">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Закрыть">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                    <h4 class="modal-title text-info text-center" id="myModalLabel">Добавление нового предмета</h4>
+                </div>
+                <div class="modal-body">
+                    <fieldset>
+                        <div class="container-fluid form-group" style="color: #163756;">
+                            <div class="row">
+                                <div class="col-md-offset-1 col-md-5 col-sm-offset-1 col-sm-5">
+                                    <div>
+                                        @Html.LabelFor(m => m.Subjects[s].SubjectName, new { @class = "control-label" })
+                                        <div class="">
+                                            @Html.EditorFor(m => m.Subjects[s].SubjectName, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(m => m.Subjects[s].SubjectName, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-5 col-sm-5">
+                                    <div>
+                                        @Html.LabelFor(m => m.Subjects[s].KindOfSubject, new { @class = "control-label" })
+                                        <div class="">
+                                            @Html.DropDownListFor(m => m.Subjects[s].KindOfSubject, new SelectList(selectLists), "Выберете вид предмета", new { @class = "form-control dropdown", @onChange = "SelectedValue(this)" })
+                                            @Html.ValidationMessageFor(m => m.Subjects[s].KindOfSubject, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div><br />
+                            <div class="row">
+                                <div class="col-md-offset-1 col-md-5 col-sm-offset-1 col-sm-5">
+                                    <div>
+                                        @Html.LabelFor(m => m.Subjects[s].TimeStart, new { @class = "control-label" })
+                                    </div>
+                                    @Html.DropDownListFor(m => m.Subjects[s].TimeStart, new SelectList(selectListsTime), "Выберете время начала", new { @class = "form-control dropdown" })
+                                </div>
+                                <div class="col-md-5 col-sm-5">
+                                    <div>
+                                        @Html.LabelFor(m => m.Subjects[s].TimeEnd, new { @class = "control-label" })
+                                    </div>
+                                    @Html.DropDownListFor(m => m.Subjects[s].TimeEnd, new SelectList(selectListsTime1), "Выберете время окончания", new { @class = "form-control dropdown" })
+                                </div>
+                            </div><br />
+                            <div class="row">
+                                <div class="col-md-offset-2 col-md-3 col-sm-offset-2 col-sm-3">
+                                    <div class="radio-inline">
+                                        <label>
+                                            <input name="dayweek" type="radio" id="chd1" value="0" />Понедельник
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-3">
+                                    <div class="radio-inline">
+                                        <label>
+                                            <input name="dayweek" type="radio" id="chd2" value="1" />Вторник
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-3">
+                                    <div class="radio-inline">
+                                        <label>
+                                            <input name="dayweek" type="radio" id="chd3" value="2" />Среда
+                                        </label>
+                                    </div>
+                                </div>
+                            </div><div class="row">
+                                <div class="col-md-offset-2 col-md-3 col-sm-offset-2 col-sm-3">
+                                    <div class="radio-inline">
+                                        <label>
+                                            <input name="dayweek" type="radio" id="chd4" value="3" />Четверг
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-3">
+                                    <div class="radio-inline">
+                                        <label>
+                                            <input name="dayweek" type="radio" id="chd5" value="4" />Пятница
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-3">
+                                    <div class="radio-inline">
+                                        <label>
+                                            <input name="dayweek" type="radio" id="chd6" value="5" />Суббота
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <br />
+                            <div class="row">
+                                <div class="col-md-offset-1 col-md-5 col-sm-offset-1 col-sm-5">
+                                    <div class="radio-inline">
+                                        <label>
+                                            <input type="radio" id="Nw" name="we" />По нечетным неделям
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-5 col-sm-5">
+                                    <div class="radio-inline">
+                                        <label>
+                                            <input type="radio" id="Chw" name="we" />По четным неделям
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-offset-3 col-md-1 col-sm-offset-3 col-sm-1">
+                                    <div class="checkbox-inline">
+                                        <label>
+                                            <input name="check" type="checkbox" id="ch1" value="1" />1
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-1 col-sm-1">
+                                    <div class="checkbox-inline">
+                                        <label>
+                                            <input name="check" type="checkbox" id="ch2" value="2" />2
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-1 col-sm-1">
+                                    <div class="checkbox-inline">
+                                        <label>
+                                            <input name="check" type="checkbox" id="ch3" value="3" />3
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-1 col-sm-1">
+                                    <div class="checkbox-inline">
+                                        <label>
+                                            <input name="check" type="checkbox" id="ch4" value="4" />4
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-1 col-sm-1">
+                                    <div class="checkbox-inline">
+                                        <label>
+                                            <input name="check" type="checkbox" id="ch5" value="5" />5
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-1 col-sm-1">
+                                    <div class="checkbox-inline">
+                                        <label>
+                                            <input name="check" type="checkbox" id="ch6" value="6" />6
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-offset-3 col-md-1 col-sm-offset-3 col-sm-1">
+                                    <div class="checkbox-inline">
+                                        <label>
+                                            <input name="check" type="checkbox" id="ch7" value="7" />7
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-1 col-sm-1">
+                                    <div class="checkbox-inline">
+                                        <label>
+                                            <input name="check" type="checkbox" id="ch8" value="8" />8
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-1 col-sm-1">
+                                    <div class="checkbox-inline">
+                                        <label>
+                                            <input name="check" type="checkbox" id="ch9" value="9" />9
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-1 col-sm-1">
+                                    <div class="checkbox-inline">
+                                        <label>
+                                            <input name="check" type="checkbox" id="ch10" value="10" />10
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-1 col-sm-1">
+                                    <div class="checkbox-inline">
+                                        <label>
+                                            <input name="check" type="checkbox" id="ch11" value="11" />11
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-1 col-sm-1">
+                                    <div class="checkbox-inline">
+                                        <label>
+                                            <input name="check" type="checkbox" id="ch12" value="12" />12
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-offset-3 col-md-1 col-sm-offset-3 col-sm-1">
+                                    <div class="checkbox-inline">
+                                        <label>
+                                            <input name="check" type="checkbox" id="ch13" value="13" />13
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-1 col-sm-1">
+                                    <div class="checkbox-inline">
+                                        <label>
+                                            <input name="check" type="checkbox" id="ch14" value="14" />14
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-1 col-sm-1">
+                                    <div class="checkbox-inline">
+                                        <label>
+                                            <input name="check" type="checkbox" id="ch15" value="15" />15
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-1 col-sm-1">
+                                    <div class="checkbox-inline">
+                                        <label>
+                                            <input name="check" type="checkbox" id="ch16" value="16" />16
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-1 col-sm-1">
+                                    <div class="checkbox-inline">
+                                        <label>
+                                            <input name="check" type="checkbox" id="ch17" value="17" />17
+                                        </label>
+                                    </div>
+                                </div>
+                                <br /><br />
+                                <div class="row">
+                                    <div class="col-md-offset-1 col-md-5 col-sm-offset-1 col-sm-5">
+                                        <div>
+                                            @Html.LabelFor(m => m.Subjects[s].GroupStud, new { @class = "control-label" })
+                                            <div class="">
+                                                @Html.EditorFor(m => m.Subjects[s].GroupStud, new { @class = "form-control" })
+                                                @Html.ValidationMessageFor(m => m.Subjects[s].GroupStud, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-5 col-sm-5">
+                                        <div>
+                                            @Html.LabelFor(m => m.Subjects[s].Audit, new { @class = "control-label" })
+                                            <div class="">
+                                                @Html.EditorFor(m => m.Subjects[s].Audit, new { @class = "form-control" })
+                                                @Html.ValidationMessageFor(m => m.Subjects[s].Audit, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div><br />
+                                <div id="hid" style="visibility:hidden; display:none;">
+                                    <div class="row">
+                                        <div class="col-md-offset-1 col-md-5 col-sm-offset-1 col-sm-5">
+                                            <div>
+                                                @Html.LabelFor(m => m.Subjects[s].SubGroup, new { @class = "control-label" })
+                                            </div>
+                                        </div>
+                                    </div><br />
+                                    <div class="row">
+                                        <div class="col-md-1 col-sm-1"></div>
+                                        @{
+                                            int k = 1;
+                                            Model.Subjects = new List<WebApp.Models.Subject>();
+                                            WebApp.Models.Subject sub = new WebApp.Models.Subject();
+                                            Model.Subjects.Add(sub);
+                                            for (int i = 0; i < 3; i++, k++)
+                                            {
+                                                <div class="col-md-3 col-sm-3">
+                                                    <div class="checkbox-inline">
+                                                        <label>
+                                                            @Html.CheckBoxFor(m => m.Subjects[s].SubGroup[i])@k подгруппа
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            }
+                                        }
+                                    </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-info" id="modsub">Добавить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    function SelectedValue(ddlObject) {
+        var selectedValue = ddlObject.value;
+        var sel = document.getElementById("Subjects_0__TimeStart");
+        var sel1 = document.getElementById("Subjects_0__TimeEnd");
+        if (selectedValue == "Лабораторная работа") {
+            document.getElementById("hid").style.visibility = "visible";
+            document.getElementById("hid").style.display = "block";
+            sel.options[2].disabled = true;
+            sel.options[4].disabled = true;
+            sel.options[6].disabled = true;
+            sel1.options[1].disabled = true;
+            sel1.options[3].disabled = true;
+            sel1.options[5].disabled = true;
+        } else {
+            document.getElementById("hid").style.visibility = "hidden";
+            document.getElementById("hid").style.display = "none";
+            sel.options[2].disabled = false;
+            sel.options[4].disabled = false;
+            sel.options[6].disabled = false;
+            sel1.options[1].disabled = false;
+            sel1.options[3].disabled = false;
+            sel1.options[5].disabled = false;
+        };
+    };
+	
+    $(document).ready(function () {
+        var dw = document.getElementsByName("dayweek");
+        var dn =@d;
+        for (var u = 0; u < dw.length; u++) {
+            if (dn === u) {
+                dw[u].checked = true;
+            };
+        };
+		
+        $("#MyModal").modal("show");
+		
+        $("#Nw").click(function () {
+            $("#ch1").attr("checked", "checked");
+            $("#ch3").attr("checked", "checked");
+            $("#ch5").attr("checked", "checked");
+            $("#ch7").attr("checked", "checked");
+            $("#ch9").attr("checked", "checked");
+            $("#ch11").attr("checked", "checked");
+            $("#ch13").attr("checked", "checked");
+            $("#ch15").attr("checked", "checked");
+            $("#ch17").attr("checked", "checked");
+            $("#ch2").removeAttr("checked");
+            $("#ch4").removeAttr("checked");
+            $("#ch6").removeAttr("checked");
+            $("#ch8").removeAttr("checked");
+            $("#ch10").removeAttr("checked");
+            $("#ch12").removeAttr("checked");
+            $("#ch14").removeAttr("checked");
+            $("#ch16").removeAttr("checked");
+        });
+		
+        $("#Chw").click(function () {
+            $("#ch2").attr("checked", "checked");
+            $("#ch4").attr("checked", "checked");
+            $("#ch6").attr("checked", "checked");
+            $("#ch8").attr("checked", "checked");
+            $("#ch10").attr("checked", "checked");
+            $("#ch12").attr("checked", "checked");
+            $("#ch14").attr("checked", "checked");
+            $("#ch16").attr("checked", "checked");
+            $("#ch1").removeAttr("checked");
+            $("#ch3").removeAttr("checked");
+            $("#ch5").removeAttr("checked");
+            $("#ch7").removeAttr("checked");
+            $("#ch9").removeAttr("checked");
+            $("#ch11").removeAttr("checked");
+            $("#ch13").removeAttr("checked");
+            $("#ch15").removeAttr("checked");
+            $("#ch17").removeAttr("checked");
+        });
+		
+        $("radio[name=dayweek]").click(function () {
+            var id = this.id.substring(3);
+            $("#d").val(id);
+        });
+    });
+</script>

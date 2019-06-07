@@ -1,0 +1,113 @@
+﻿@{
+    ViewBag.Title = "Подгруппы";
+}
+<html>
+<head>
+    <title>Подгруппы</title>
+    <style>
+        .subject-info-box-1,
+        .subject-info-box-2,
+        .subject-info-box-3 {
+            float: left;
+            width: 30%;
+            max-width: 280px;
+        }
+
+            .subject-info-box-1 select,
+            .subject-info-box-2 select,
+            .subject-info-box-3 select {
+                height: 400px;
+                max-width: 280px;
+                padding: 0;
+            }
+
+                .subject-info-box-1 select option,
+                .subject-info-box-2 select option,
+                .subject-info-box-3 select option {
+                    padding: 4px 10px 4px 10px;
+                }
+
+                    .subject-info-box-1 select option:hover,
+                    .subject-info-box-2 select option:hover,
+                    .subject-info-box-3 select option:hover {
+                        background: #EEEEEE;
+                    }
+
+        .subject-info-arrows {
+            float:left;
+            width: 5%;
+        }
+
+
+            .subject-info-arrows input {
+                width: 60%;
+                text-align:center;
+                margin-bottom: 5px;
+            }
+        
+        .style-select select {
+            padding: 0;
+            margin:0;
+        }
+
+            .style-select select option {
+                padding: 4px 10px 4px 10px;
+            }
+
+                .style-select select option:hover {
+                    background: #EEEEEE;
+                }
+    </style>
+</head>
+<body>
+    <h2 class="h2">Распределение на подгруппы</h2><br />
+    <div class="form-horizontal">
+        <div class="form-group">
+            <div class="row col-md-offset-1 col-md-10" style="padding-bottom:2%">
+                <label for="ListStud">Учебная группа</label>
+                @Html.DropDownList("ListStud", ViewData["ListStud"] as SelectList, "Выберете учебную группу", new { @class = "form-control", @onChange = "SelectedValue(this)" })
+            </div><br /><br />
+                <div class="row col-md-offset-1 col-md-10" style="padding-bottom:2%">
+                    <label for="DisName">Дисциплина</label><br />
+                    <input type="text" id="DisName" />
+                </div><br />
+                <div class="row col-md-offset-1 col-md-10" style="padding-bottom:2%">
+                    <label for="NumSub">Количество подгрупп</label><br />
+                    <input type="number" id="NumSub" max="3" min="1" value="2"/>
+                </div><br />
+            <div class="row col-md-offset-1 col-md-10" style="padding-bottom:2%">
+                <button type="button" class="btn btn-primary" id="butCl">Выбрать</button>
+            </div>
+            <br />
+            <div id="subgr"></div>
+        </div>
+    </div>
+</body>
+</html>
+
+<script type="text/javascript">
+    var selectedValue;
+    $(document).ready(function () {
+        $("#butCl").click(function (){
+            var nums = document.getElementById("NumSub").value;
+            var requrl = '@Url.Action("CreateSubGr", "Schedule", null, Request.Url.Scheme, null)';
+                $.ajax({
+                    type: "POST",
+                    url: requrl,
+                    data: {
+                        num: nums,
+                        sel: selectedValue
+                    },
+                    success: function (data) {
+                        $("#subgr").html(data);
+                    },
+                    error: (error) => {
+                        console.log(JSON.stringify(error));
+                    }
+                });
+        });
+    });
+    function SelectedValue(ddlObject) {
+        selectedValue = ddlObject.value;
+    }
+</script>
