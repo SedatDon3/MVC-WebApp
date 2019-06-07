@@ -16,4 +16,4 @@
 ### Контроллер
 ### Представление
 
-![](https://github.com/SedatDon3/MVC-WebApp/blob/master/Screenshots/Grid.png?raw=true =640x532)
+![](https://github.com/SedatDon3/MVC-WebApp/blob/master/Screenshots/Grid.png?raw=true){:height="532px" width="640px"}
