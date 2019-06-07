@@ -1,0 +1,235 @@
+﻿@model WebApp.Models.Grid
+
+@{ 
+    TempData["Mod"] = Model;
+    TempData.Keep("Mod");
+}
+
+@using (Html.BeginForm("CreateGrid", "Schedule", FormMethod.Post, new { @id="FormId"}))
+{
+    @Html.ValidationSummary(true)
+    <div class="modal" id="MyModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header text-info">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Закрыть">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                    <h4 class="modal-title text-info text-center" id="myModalLabel"><b>Форма установки параметров сетки</b></h4>
+                </div>
+                <div class="modal-body">
+                    <fieldset>
+                        <div class="container-fluid form-group" style="color: #163756;">
+                            <div class="row">
+                                <div class="col-md-offset-1 col-md-5 col-sm-offset-1 col-sm-5">
+                                    <div>
+                                        @Html.LabelFor(m => m.SubjectName, new { @class = "control-label" })
+                                        <div class="">
+                                            @Html.ValueFor(m => m.SubjectName)
+                                            @Html.ValidationMessageFor(m => m.SubjectName, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-5 col-sm-5">
+                                    <div>
+                                        @Html.LabelFor(m => m.KindOfSubject, new { @class = "control-label" })
+                                        <div class="">
+                                            @Html.ValueFor(m => m.KindOfSubject)
+                                            @Html.ValidationMessageFor(m => m.KindOfSubject, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div><br />
+                            <div class="row">
+                                <div class="col-md-offset-1 col-md-5 col-sm-offset-1 col-sm-5">
+                                    <div>
+                                        @Html.LabelFor(m => m.Group, new { @class = "control-label" })
+                                        <div class="">
+                                            @Html.ValueFor(m => m.Group)
+                                            @Html.ValidationMessageFor(m => m.Group, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-5 col-sm-5">
+                                    <div>
+                                        @Html.LabelFor(m => m.Course, new { @class = "control-label" })
+                                        <div class="">
+                                            @Html.ValueFor(m => m.Course)
+                                            @Html.ValidationMessageFor(m => m.Course, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <br />
+                            <div class="row">
+                                <div class="col-md-offset-1 col-md-5 col-sm-offset-1 col-sm-5">
+                                    <div>
+                                        @Html.LabelFor(m => m.Audit, new { @class = "control-label" })
+                                        <div class="">
+                                            @Html.ValueFor(m => m.Audit)
+                                            @Html.ValidationMessageFor(m => m.Audit, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-5 col-sm-5">
+                                    <div>
+                                        @Html.LabelFor(m => m.Date, new { @class = "control-label" })
+                                        <div class="">
+                                            @Model.Date.ToLocalTime().ToShortDateString()
+                                            @Html.ValidationMessageFor(m => m.Date, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div><hr>
+                            <div class="row">
+                                <div class="text-center">
+                                    <p class="text-center"><b>Отметки</b></p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-offset-1 col-md-5 col-sm-offset-1 col-sm-5">
+                                    <div class="checkbox">
+                                        <input type="checkbox" name="marks" checked="checked" id="pos" value="1" />
+                                        <label for="pos">Посещаемость</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            @if (Model.KindOfSubject == "Лекция")
+                            {
+                                <div class="row">
+                                    <div class="col-md-offset-1 col-md-5 col-sm-offset-1 col-sm-5">
+                                        <div class="checkbox">
+                                            <input type="checkbox" name="marks" id="work" value="2" />
+                                            <label for="work">Работа на лекции</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            }
+                            else if (Model.KindOfSubject == "Практическое занятие")
+                            {
+                                <div class="row">
+                                    <div class="col-md-offset-1 col-md-5 col-sm-offset-1 col-sm-5">
+                                        <div class="checkbox">
+                                            <input type="checkbox" name="marks" id="doc" value="2" />
+                                            <label for="doc">Доклад</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-offset-1 col-md-5 col-sm-offset-1 col-sm-5">
+                                        <div class="checkbox">
+                                            <input type="checkbox" name="marks"  id="ev" value="3" />
+                                            <label for="ev">Оценка</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-offset-1 col-md-5 col-sm-offset-1 col-sm-5">
+                                        <div class="checkbox">
+                                            <input type="checkbox" name="marks" id="task" value="4" />
+                                            <label for="task">Выполнение задания</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            else if (Model.KindOfSubject == "Лабораторная работа")
+                            {
+                                <div class="row">
+                                    <div class="col-md-offset-1 col-md-5 col-sm-offset-1 col-sm-5">
+                                        <div class="checkbox">
+                                            <input type="checkbox" checked="checked" id="subgr" />
+                                            <label for="subgr">По подгруппам</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-offset-2 col-md-5 col-sm-offset-2 col-sm-5">
+                                        <div class="radio">
+                                            <input type="radio" name="subgro" checked="checked" id="sub1" value="3" />
+                                            <label for="sub1">1 подгруппа</label>
+                                        </div>
+                                        <div class="radio">
+                                            <input type="radio" name="subgro" id="sub2" value="4" />
+                                            <label for="sub2">2 подгруппа</label>
+                                        </div>
+                                        <div class="radio">
+                                            <input type="radio" name="subgro" id="sub3" value="5" />
+                                            <label for="sub3">3 подгруппа</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-offset-1 col-md-5 col-sm-offset-1 col-sm-5">
+                                        <div class="radio">
+                                            <input type="radio" name="prot" id="rad1" value="6" />
+                                            <label for="rad1">Защита отчета с оценкой</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-offset-1 col-md-5 col-sm-offset-1 col-sm-5">
+                                        <div class="radio">
+                                            <input type="radio" name="prot" id="rad2" value="7" />
+                                            <label for="rad2">Защита отчета без оценки</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-offset-1 col-md-5 col-sm-offset-1 col-sm-5">
+                                        <div class="radio">
+                                            <input type="radio" name="prot" id="rad3" value="8" />
+                                            <label for="rad3">Без защиты</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-info" id="modsub">Создать</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#pos").change(function () {
+            $(this).prop("checked", true);
+        });
+        $("#subgr").change(function () {
+            $(this).prop("checked", true);
+        });
+        $("#FormId").submit(function (e) {
+            var rr = existsub();
+            if (rr) {
+                e.preventDefault();
+                alert("Подгруппы для указанной учебной группы не найдены. Сначала необходимо разделить студентов на подгруппы");
+                return false;
+            }      
+        });
+    });
+
+    function existsub() {
+        var g ='@Model.Group';
+        var s = '@Model.SubjectName';
+        var requrl = '@Url.Action("ExistSubgroup", "Schedule", null, Request.Url.Scheme, null)';
+        var rr;
+        $.ajax({
+            type: "POST",
+            url: requrl,
+            data: { group: g, subname: s },
+            success: function (r) {
+                rr = r.returnvalue;
+                return rr;
+            },
+            error: (error) => {
+                console.log(JSON.stringify(error));
+            }
+        });        
+    }
+</script>
