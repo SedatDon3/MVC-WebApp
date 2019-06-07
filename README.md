@@ -16,4 +16,4 @@
 ### Контроллер
 ### Представление
 
-![Index.cshtml](https://github.com/SedatDon3/MVC-WebApp/blob/master/Screenshots/Grid.png?raw=true)
+![](https://github.com/SedatDon3/MVC-WebApp/blob/master/Screenshots/Grid.png?raw=true =640x532)
