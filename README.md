@@ -36,11 +36,11 @@
 ### View
 
 **Index.cshtml** - представление, отображающее расписание и являющееся домашней страницей для пользователей с ролью преподавателя.<br /><br />
-<img src="https://github.com/SedatDon3/MVC-WebApp/blob/master/Screenshots/Index.png?raw=true" width="686" height="462">
+<img src="https://github.com/SedatDon3/MVC-WebApp/blob/master/Screenshots/Index.png?raw=true" width="586">
 <br />
 **\_SetGrid.schtml** - частичное представление в виде формы для установки параметров сетки.<br /> <br />
-<img src="https://github.com/SedatDon3/MVC-WebApp/blob/master/Screenshots/_SetGrid.png?raw=true" width="686" height="462">
+<img src="https://github.com/SedatDon3/MVC-WebApp/blob/master/Screenshots/_SetGrid.png?raw=true" width="586">
 <br />
 **Grid.cshtml** - представление, отображающее сетку для преподавателя.<br /><br />
-<img src="https://github.com/SedatDon3/MVC-WebApp/blob/master/Screenshots/Grid.png?raw=true" width="686" height="462">
+<img src="https://github.com/SedatDon3/MVC-WebApp/blob/master/Screenshots/Grid.png?raw=true" width="586">
 
