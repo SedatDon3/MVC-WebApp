@@ -35,8 +35,8 @@ ScheduleController.cs
 
 ### View
 
-**Index.cshtml** - представление, отображающее расписание и являющееся домашней страницей для пользователей с ролью преподавателя.
-<img src="https://github.com/SedatDon3/MVC-WebApp/blob/master/Screenshots/Index.png?raw=true" width="641" height="532">
+**Index.cshtml** - представление, отображающее расписание и являющееся домашней страницей для пользователей с ролью преподавателя.<br />
+<img src="https://github.com/SedatDon3/MVC-WebApp/blob/master/Screenshots/Index.png?raw=true" width="641" height="502">
 
 \_SetGrid.schtml
 Grid.cshtml
