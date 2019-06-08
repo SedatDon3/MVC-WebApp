@@ -24,9 +24,9 @@
 
 ### Model
 
-**ScheduleView.cs** - модель расписания.
-**SubgroupView.cs** - модель подгруппы.
-**Grid.cs** - модель сетки.
+**ScheduleView.cs** - модель расписания.<br />
+**SubgroupView.cs** - модель подгруппы.<br />
+**Grid.cs** - модель сетки.<br />
 **ScheduleContext.cs** - методы для работы непосредственно с СУБД, а именно добавление в БД, изменение в БД, удаление из БД предметов в расписании преподавателя и другие методы.
 
 ### Controller
@@ -35,12 +35,12 @@
 
 ### View
 
-**Index.cshtml** - представление, отображающее расписание и являющееся домашней страницей для пользователей с ролью преподавателя.<br /><br />
-<img src="https://github.com/SedatDon3/MVC-WebApp/blob/master/Screenshots/Index.png?raw=true" width="586">
-<br />
-**\_SetGrid.schtml** - частичное представление в виде формы для установки параметров сетки.<br /> <br />
-<img src="https://github.com/SedatDon3/MVC-WebApp/blob/master/Screenshots/_SetGrid.png?raw=true" width="586">
-<br />
-**Grid.cshtml** - представление, отображающее сетку для преподавателя.<br /><br />
-<img src="https://github.com/SedatDon3/MVC-WebApp/blob/master/Screenshots/Grid.png?raw=true" width="586">
+**Index.cshtml** - представление, отображающее расписание и являющееся домашней страницей для пользователей с ролью преподавателя.<br />
+<img src="https://github.com/SedatDon3/MVC-WebApp/blob/master/Screenshots/Index.png?raw=true" width="606">
+<br /><br />
+**\_SetGrid.schtml** - частичное представление в виде формы для установки параметров сетки.<br />
+<img src="https://github.com/SedatDon3/MVC-WebApp/blob/master/Screenshots/_SetGrid.png?raw=true" width="606">
+<br /><br />
+**Grid.cshtml** - представление, отображающее сетку для преподавателя.<br />
+<img src="https://github.com/SedatDon3/MVC-WebApp/blob/master/Screenshots/Grid.png?raw=true" width="606">
 
